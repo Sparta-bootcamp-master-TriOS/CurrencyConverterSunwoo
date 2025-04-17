@@ -9,7 +9,7 @@ import Foundation
 
 class DataService {
     // 서버 데이터(환율 데이터)를 외부 API로부터 불러오고 호출한 쪽(VC)에게 전달하는 메서드 선언
-    func fetchData(completion: @escaping (DataResponse) -> Void) {
+    func fetchData(success: @escaping (DataResponse) -> Void, failure: @escaping () -> Void) {
         
         guard let url: URL = URL(string: "https://open.er-api.com/v6/latest/USD") else {
             print("URL is not correct")
@@ -31,7 +31,10 @@ class DataService {
             // http 통신 response에는 status code가 함께오는데, 200번대가 성공
             let successRange: Range = (200..<300)
             // 통신 성공
-            guard let data, error == nil else { return }
+            guard let data, error == nil else {
+                DispatchQueue.main.async { failure() }
+                return
+            }
             
             if let response: HTTPURLResponse = response as? HTTPURLResponse{
                 // 요청 성공 (StatusCode가 200번대)
@@ -40,10 +43,12 @@ class DataService {
                     guard let decoded: DataResponse = try? JSONDecoder().decode(DataResponse.self, from: data) else { return }
                     
                     DispatchQueue.main.async{
-                        completion(decoded)
+                        success(decoded)
                     }
                 } else { // 요청 실패 (Status code가 200대 아님)
-                    print("요청 실패")
+                    DispatchQueue.main.async {
+                        failure()
+                    }
                 }
             }
         }.resume()

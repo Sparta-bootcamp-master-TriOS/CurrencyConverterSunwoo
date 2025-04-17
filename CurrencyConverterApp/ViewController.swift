@@ -32,8 +32,18 @@ class ViewController: UIViewController {
     }
     
     private func fetchCurrencyData() {
-        dataService.fetchData { [weak self] response in
+        dataService.fetchData(success: { [weak self] response in
             self?.currencyTableView.updateData(response: response)
-        }
+        }, failure: { [weak self] in
+            self?.dataErrorAlert()
+            }
+        )
+    }
+    
+    // 데이터 로딩 실패 시 Alert 띄어주는 함수 구현
+    private func dataErrorAlert() {
+        let alert = UIAlertController(title: "Error", message: "🚨데이터를 불러올 수 없습니다!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }
