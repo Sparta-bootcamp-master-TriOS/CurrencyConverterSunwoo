@@ -6,14 +6,25 @@
 //
 
 import UIKit
+import SnapKit
 
 class ViewController: UIViewController {
+    private let currencyTableView = CurrencyTableView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        configureUI()
     }
-
+    
+    private func configureUI() {
+        view.backgroundColor = .white
+        
+        [currencyTableView].forEach { view.addSubview($0) }
+        
+        currencyTableView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
 
 }
 
