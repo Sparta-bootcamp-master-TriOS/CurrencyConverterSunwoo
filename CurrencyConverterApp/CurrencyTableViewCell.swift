@@ -49,7 +49,7 @@ class CurrencyTableViewCell: UITableViewCell {
     
     public func configure(currency: String, rate: Double) {
         currencyLabel.text = currency
-        rateLabel.text = String(rate)
+        rateLabel.text = String(format: "%.4f", rate)
     }
 
 }
