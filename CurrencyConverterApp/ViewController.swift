@@ -9,15 +9,20 @@ import UIKit
 import SnapKit
 
 class ViewController: UIViewController {
+    private let dataService = DataService()
     private let currencyTableView = CurrencyTableView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        fetchCurrencyData()
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        // 다크모드 대응
+        view.backgroundColor = UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? .black : .white
+        }
         
         [currencyTableView].forEach { view.addSubview($0) }
         
@@ -25,6 +30,10 @@ class ViewController: UIViewController {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
-
+    
+    private func fetchCurrencyData() {
+        dataService.fetchData { [weak self] response in
+            self?.currencyTableView.updateData(response: response)
+        }
+    }
 }
-

@@ -14,18 +14,12 @@ class CurrencyTableViewCell: UITableViewCell {
     
     private let currencyLabel: UILabel = {
         let label = UILabel()
-        label.text = "AAA" // 테스트용
-        label.backgroundColor = .white
-        label.textColor = .black
         label.font = .boldSystemFont(ofSize: 15)
         return label
     }()
     
     private let rateLabel: UILabel = {
         let label = UILabel()
-        label.text = "3.1415" // 테스트용
-        label.backgroundColor = .white
-        label.textColor = .black
         label.font = .systemFont(ofSize: 15)
         return label
     }()
@@ -40,7 +34,6 @@ class CurrencyTableViewCell: UITableViewCell {
     }
     
     private func configureUI() {
-        contentView.backgroundColor = .white
         [currencyLabel, rateLabel].forEach { contentView.addSubview($0) }
         
         currencyLabel.snp.makeConstraints {
@@ -54,6 +47,9 @@ class CurrencyTableViewCell: UITableViewCell {
         }
     }
     
-    
+    public func configure(currency: String, rate: Double) {
+        currencyLabel.text = currency
+        rateLabel.text = String(rate)
+    }
 
 }

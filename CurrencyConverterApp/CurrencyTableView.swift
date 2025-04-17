@@ -8,13 +8,15 @@
 import UIKit
 
 class CurrencyTableView: UIView {
+    
+    private var dataSource: [(String, Double)] = []
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .white
+        tableView.register(CurrencyTableViewCell.self, forCellReuseIdentifier: CurrencyTableViewCell.id)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(CurrencyTableViewCell.self, forCellReuseIdentifier: CurrencyTableViewCell.id)
+        
         return tableView
     }()
     
@@ -28,31 +30,39 @@ class CurrencyTableView: UIView {
     }
     
     private func configureUI() {
-        self.backgroundColor = .white
-        [tableView].forEach { self.addSubview($0) }
+        self.addSubview(tableView)
         
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
+    
+    func updateData(response: DataResponse) {
+        self.dataSource = response.rates
+            .sorted { $0.key < $1.key }
+            .map { ($0.key, $0.value) }
+        tableView.reloadData()
+    }
 }
 
 extension CurrencyTableView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        40
+        50
     }
 }
 
 extension CurrencyTableView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        60
+        dataSource.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CurrencyTableViewCell.id) as? CurrencyTableViewCell else {
             return UITableViewCell()
         }
-        
+
+        let (currency, rate) = dataSource[indexPath.row]
+        cell.configure(currency: currency, rate: rate)
         return cell
     }
 }
