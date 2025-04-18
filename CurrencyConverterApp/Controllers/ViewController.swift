@@ -15,6 +15,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        countrySearchBar.mainSearchBar.delegate = self
         configureUI()
         fetchCurrencyData()
     }
@@ -55,5 +56,18 @@ class ViewController: UIViewController {
         let alert = UIAlertController(title: "Error", message: "🚨데이터를 불러올 수 없습니다!", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
+    }
+}
+
+extension ViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            currencyTableView.items = currencyTableView.dataSource
+        } else {
+            let keyword = searchText.uppercased()
+            currencyTableView.items = currencyTableView.dataSource.filter { code, _ in
+                code.contains(keyword)
+            }
+        }
     }
 }

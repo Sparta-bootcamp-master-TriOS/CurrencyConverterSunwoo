@@ -9,7 +9,17 @@ import UIKit
 
 class CurrencyTableView: UIView {
     
-    private var dataSource: [(String, Double)] = []
+    var dataSource: [(String, Double)] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+    
+    var items: [(String, Double)] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -38,6 +48,7 @@ class CurrencyTableView: UIView {
     
     func updateData(response: [(String, Double)]) {
         self.dataSource = response
+        self.items = response
         tableView.reloadData()
     }
 }
@@ -50,7 +61,7 @@ extension CurrencyTableView: UITableViewDelegate {
 
 extension CurrencyTableView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dataSource.count
+        items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -58,7 +69,7 @@ extension CurrencyTableView: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        let (currency, rate) = dataSource[indexPath.row]
+        let (currency, rate) = items[indexPath.row]
         cell.configure(currency: currency, rate: rate)
         return cell
     }

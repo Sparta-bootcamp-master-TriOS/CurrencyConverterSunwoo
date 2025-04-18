@@ -10,7 +10,7 @@ import SnapKit
 
 class CountrySearchBar: UIView {
 
-    private let mainSearchBar: UISearchBar = {
+    let mainSearchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.placeholder = "통화 검색"
         searchBar.searchBarStyle = .minimal
