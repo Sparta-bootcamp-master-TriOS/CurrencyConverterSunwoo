@@ -10,6 +10,7 @@ import SnapKit
 
 class ViewController: UIViewController {
     private let dataService = DataService()
+    private let countrySearchBar = CountrySearchBar()
     private let currencyTableView = CurrencyTableView()
 
     override func viewDidLoad() {
@@ -24,10 +25,16 @@ class ViewController: UIViewController {
             return traitCollection.userInterfaceStyle == .dark ? .black : .white
         }
         
-        [currencyTableView].forEach { view.addSubview($0) }
+        [countrySearchBar, currencyTableView].forEach { view.addSubview($0) }
+        
+        countrySearchBar.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+        }
         
         currencyTableView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(countrySearchBar.snp.bottom)
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
