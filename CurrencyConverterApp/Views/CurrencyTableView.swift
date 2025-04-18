@@ -16,7 +16,6 @@ class CurrencyTableView: UIView {
         tableView.register(CurrencyTableViewCell.self, forCellReuseIdentifier: CurrencyTableViewCell.id)
         tableView.delegate = self
         tableView.dataSource = self
-        
         return tableView
     }()
     
@@ -37,10 +36,8 @@ class CurrencyTableView: UIView {
         }
     }
     
-    func updateData(response: DataResponse) {
-        self.dataSource = response.rates
-            .sorted { $0.key < $1.key }
-            .map { ($0.key, $0.value) }
+    func updateData(response: [(String, Double)]) {
+        self.dataSource = response
         tableView.reloadData()
     }
 }

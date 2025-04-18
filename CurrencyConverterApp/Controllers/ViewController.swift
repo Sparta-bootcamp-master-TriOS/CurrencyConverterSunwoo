@@ -33,7 +33,10 @@ class ViewController: UIViewController {
     
     private func fetchCurrencyData() {
         dataService.fetchData(success: { [weak self] response in
-            self?.currencyTableView.updateData(response: response)
+            let data = response.rates
+                .sorted { $0.key < $1.key }
+                .map { ($0.key, $0.value) }
+            self?.currencyTableView.updateData(response: data)
         }, failure: { [weak self] in
             self?.dataErrorAlert()
             }
