@@ -73,9 +73,14 @@ class ViewController: UIViewController {
 extension ViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         let keyword = searchText.uppercased()
+        
         let newItems = keyword.isEmpty
             ? allDataList
-            : allDataList.filter { $0.0.contains(keyword) }
+        : allDataList.filter {
+            let currencyCode = $0.0
+            let countryName = CurrencyCountryData.name[currencyCode] ?? ""
+            return currencyCode.contains(keyword) || countryName.contains(searchText)
+        }
         
         let newKeys = newItems.map { $0.0 }
         let oldKeys = filteredDataList.map { $0.0 }
