@@ -15,6 +15,15 @@ class CurrencyTableView: UIView {
         return tableView
     }()
     
+    private let noResultLabel: UILabel = { // 결과 없음 표시 label
+        let label = UILabel()
+        label.text = "검색 결과 없음"
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .gray
+        return label
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureUI()
@@ -22,6 +31,10 @@ class CurrencyTableView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func noResultState(isEmpty: Bool) { // 결과 없음 상태
+        tableView.backgroundView = isEmpty ? noResultLabel : nil
     }
     
     private func configureUI() {

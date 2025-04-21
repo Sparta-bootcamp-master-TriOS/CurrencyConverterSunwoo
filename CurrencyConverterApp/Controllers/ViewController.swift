@@ -88,6 +88,8 @@ extension ViewController: UISearchBarDelegate {
         
         // 항상 데이터 먼저 갱신
         filteredDataList = newItems
+        // 필터링 값이 비어있다면 "결과 없음" 호출
+        currencyTableView.noResultState(isEmpty: filteredDataList.isEmpty)
         
         // 셀 수가 같을 때만 reloadRows 사용
         if oldCount == newCount {
