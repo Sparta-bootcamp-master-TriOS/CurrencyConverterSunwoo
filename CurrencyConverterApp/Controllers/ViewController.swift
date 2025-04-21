@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewDelegates()
+        navigationBarUI()
         configureUI()
         fetchCurrencyData()
     }
@@ -29,11 +30,13 @@ class ViewController: UIViewController {
         currencyTableView.tableView.dataSource = self
     }
     
-    private func configureUI() {
+    private func navigationBarUI() {
         self.title = "환율 정보"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        
+    }
+    
+    private func configureUI() {
         // 다크모드 대응
         view.backgroundColor = UIColor {
             $0.userInterfaceStyle == .dark ? .black : .white

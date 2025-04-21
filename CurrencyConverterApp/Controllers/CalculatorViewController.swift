@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 
 class CalculatorViewController: UIViewController {
+    private let calculatorView = CalculatorView()
     
     private let currencyCode: String
     private let rate: Double
@@ -25,7 +26,17 @@ class CalculatorViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationBarUI()
         configureUI()
+    }
+    
+    private func navigationBarUI() {
+        self.title = "환율 계산기"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        
+        let backBarButtonItem = UIBarButtonItem(title: "환율 정보", style: .plain, target: self, action: nil)
+        self.navigationItem.backBarButtonItem = backBarButtonItem
     }
     
     private func configureUI() {
@@ -33,12 +44,14 @@ class CalculatorViewController: UIViewController {
             $0.userInterfaceStyle == .dark ? .black : .white
         }
         
-        self.title = "환율 계산기"
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .always
+        view.addSubview(calculatorView)
         
-        let backBarButtonItem = UIBarButtonItem(title: "환율 정보", style: .plain, target: self, action: nil)
-        self.navigationItem.backBarButtonItem = backBarButtonItem
+        calculatorView.currencyLabel.text = currencyCode
+        calculatorView.countryLabel.text = CurrencyCountryData.name[currencyCode] ?? ""
+        
+        calculatorView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
     
 }
