@@ -30,16 +30,16 @@ class CalculatorView: UIView {
         return stackView
     }()
     
-    private let amountTextField: UITextField = {
+    let amountTextField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
         textField.keyboardType = .decimalPad
         textField.textAlignment = .center
-        textField.placeholder = "금액을 입력하세요"
+        textField.placeholder = "달러(USD)를 입력하세요"
         return textField
     }()
     
-    private let convertButton: UIButton = {
+    let convertButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
@@ -50,7 +50,7 @@ class CalculatorView: UIView {
         return button
     }()
     
-    private let resultLabel: UILabel = {
+    let resultLabel: UILabel = {
         let label = UILabel()
         label.text = "계산 결과가 여기에 표시됩니다."
         label.font = .systemFont(ofSize: 20, weight: .medium)

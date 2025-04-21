@@ -28,6 +28,7 @@ class CalculatorViewController: UIViewController {
         super.viewDidLoad()
         navigationBarUI()
         configureUI()
+        buttonDidTapped()
     }
     
     private func navigationBarUI() {
@@ -54,4 +55,16 @@ class CalculatorViewController: UIViewController {
         }
     }
     
+    private func buttonDidTapped() {
+        calculatorView.convertButton.addTarget(self, action: #selector(didTapConvert), for: .touchUpInside)
+    }
+    
+    @objc private func didTapConvert() {
+        guard let inputNumber = calculatorView.amountTextField.text,
+              let amount = Double(inputNumber) else { return }
+        
+        let result = amount * rate
+        
+        calculatorView.resultLabel.text = "$\(amount) → \(result) \(currencyCode)"
+    }
 }
