@@ -64,7 +64,12 @@ class CalculatorViewController: UIViewController {
               let amount = Double(inputNumber) else { return }
         
         let result = amount * rate
+        let roundedAmount = (amount * 100).rounded() / 100
+        let roundedResult = (result * 100).rounded() / 100
         
-        calculatorView.resultLabel.text = "$\(amount) → \(result) \(currencyCode)"
+        let stringAmount = String(format: "%.2f", roundedAmount)
+        let stringResult = String(format: "%.2f", roundedResult)
+        
+        calculatorView.resultLabel.text = "$\(stringAmount) → \(stringResult) \(currencyCode)"
     }
 }
