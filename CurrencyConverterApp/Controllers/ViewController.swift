@@ -30,6 +30,10 @@ class ViewController: UIViewController {
     }
     
     private func configureUI() {
+        self.title = "환율 정보"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        
         // 다크모드 대응
         view.backgroundColor = UIColor {
             $0.userInterfaceStyle == .dark ? .black : .white

@@ -33,6 +33,12 @@ class CalculatorViewController: UIViewController {
             $0.userInterfaceStyle == .dark ? .black : .white
         }
         
+        self.title = "환율 계산기"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        
+        let backBarButtonItem = UIBarButtonItem(title: "환율 정보", style: .plain, target: self, action: nil)
+        self.navigationItem.backBarButtonItem = backBarButtonItem
     }
     
 }
