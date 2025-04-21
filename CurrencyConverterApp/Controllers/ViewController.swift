@@ -112,6 +112,13 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         60
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let (currencyCode, rate) = filteredDataList[indexPath.row]
+        let calculatorVC = CalculatorViewController(currencyCode: currencyCode, rate: rate)
+        
+        navigationController?.pushViewController(calculatorVC, animated: true)
+    }
 }
 
 extension ViewController: UITableViewDataSource {
