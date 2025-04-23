@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		8CAA901E2DB90943005A84FE /* CurrencyData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAA901D2DB90943005A84FE /* CurrencyData+CoreDataProperties.swift */; };
 		8CAA901F2DB90943005A84FE /* CurrencyData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAA901C2DB90943005A84FE /* CurrencyData+CoreDataClass.swift */; };
-		8CB8F8C22DB0E06D0053F278 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8CB8F8C12DB0E06D0053F278 /* SnapKit */; };
+		8CAA90242DB952DD005A84FE /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8CAA90232DB952DD005A84FE /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,7 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8CB8F8C22DB0E06D0053F278 /* SnapKit in Frameworks */,
+				8CAA90242DB952DD005A84FE /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,7 +89,7 @@
 			);
 			name = CurrencyConverterApp;
 			packageProductDependencies = (
-				8CB8F8C12DB0E06D0053F278 /* SnapKit */,
+				8CAA90232DB952DD005A84FE /* SnapKit */,
 			);
 			productName = CurrencyConverterApp;
 			productReference = 8CB8F8672DAFA56C0053F278 /* CurrencyConverterApp.app */;
@@ -120,7 +120,7 @@
 			mainGroup = 8CB8F85E2DAFA56C0053F278;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				8CB8F8C02DB0E06D0053F278 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				8CAA90222DB952DD005A84FE /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8CB8F8682DAFA56C0053F278 /* Products */;
@@ -362,7 +362,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		8CB8F8C02DB0E06D0053F278 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+		8CAA90222DB952DD005A84FE /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
@@ -373,9 +373,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8CB8F8C12DB0E06D0053F278 /* SnapKit */ = {
+		8CAA90232DB952DD005A84FE /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8CB8F8C02DB0E06D0053F278 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			package = 8CAA90222DB952DD005A84FE /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
