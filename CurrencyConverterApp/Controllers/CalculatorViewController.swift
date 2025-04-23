@@ -10,13 +10,10 @@ import SnapKit
 
 class CalculatorViewController: UIViewController {
     private let calculatorView = CalculatorView()
-    
-    private let currencyCode: String
-    private let rate: Double
+    private let viewModel: CalculatorViewModel
     
     init(currencyCode: String, rate: Double) {
-        self.currencyCode = currencyCode
-        self.rate = rate
+        self.viewModel = CalculatorViewModel(rate: rate, currencyCode: currencyCode)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -29,6 +26,8 @@ class CalculatorViewController: UIViewController {
         navigationBarUI()
         configureUI()
         buttonDidTapped()
+        bindViewModel()
+        updateCurrencyLabels()
     }
     
     private func navigationBarUI() {
@@ -47,11 +46,23 @@ class CalculatorViewController: UIViewController {
         
         view.addSubview(calculatorView)
         
-        calculatorView.currencyLabel.text = currencyCode
-        calculatorView.countryLabel.text = CurrencyCountryData.name[currencyCode] ?? ""
-        
         calculatorView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+    
+    private func updateCurrencyLabels() {
+        calculatorView.currencyLabel.text = viewModel.currencyCode
+        calculatorView.countryLabel.text = CurrencyCountryData.name[viewModel.currencyCode] ?? ""
+    }
+    
+    private func bindViewModel() {
+        viewModel.stateChange = { [weak self] state in
+            self?.calculatorView.resultLabel.text = state.result
+        }
+        
+        viewModel.error = { [weak self] message in
+            self?.showAlert(message: message)
         }
     }
     
@@ -60,24 +71,8 @@ class CalculatorViewController: UIViewController {
     }
     
     @objc private func didTapConvert() {
-        guard let inputNumber = calculatorView.amountTextField.text, !inputNumber.isEmpty else {
-            showAlert(message: "금액을 입력해주세요")
-            return
-        }
-        guard let amount = Double(inputNumber) else {
-            showAlert(message: "올바른 숫자를 입력해주세요")
-            return
-        }
-        
-        let result = amount * rate
-        // 반올림 구현
-        let roundedAmount = (amount * 100).rounded() / 100
-        let roundedResult = (result * 100).rounded() / 100
-        
-        let stringAmount = String(format: "%.2f", roundedAmount)
-        let stringResult = String(format: "%.2f", roundedResult)
-        
-        calculatorView.resultLabel.text = "$\(stringAmount) → \(stringResult) \(currencyCode)"
+        let input = calculatorView.amountTextField.text ?? ""
+        viewModel.convert(input: input)
     }
     
     private func showAlert(message: String) {

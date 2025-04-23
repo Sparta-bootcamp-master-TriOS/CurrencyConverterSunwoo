@@ -9,19 +9,18 @@ import UIKit
 import SnapKit
 
 class ViewController: UIViewController {
-    private let dataService = DataService()
+    private let viewModel = MainViewModel()
     private let countrySearchBar = CountrySearchBar()
     private let currencyTableView = CurrencyTableView()
-    
-    private var allDataList: [(String, Double)] = [] // 모든 데이터
-    private var filteredDataList: [(String, Double)] = [] // 필터링된 데이터
     
     override func viewDidLoad() {
         super.viewDidLoad()
         viewDelegates()
         navigationBarUI()
         configureUI()
-        fetchCurrencyData()
+        bindViewModel()
+        viewModel.action?(.fetchData)
+        bindError()
     }
     
     private func viewDelegates() {
@@ -55,18 +54,25 @@ class ViewController: UIViewController {
         }
     }
     
-    private func fetchCurrencyData() {
-        dataService.fetchData(success: { [weak self] response in
-            let data = response.rates
-                .sorted { $0.key < $1.key }
-                .map { ($0.key, $0.value) }
-            self?.allDataList = data
-            self?.filteredDataList = data
-            self?.currencyTableView.tableView.reloadData()
-        }, failure: { [weak self] in
-            self?.dataErrorAlert()
+    private func bindViewModel() {
+        viewModel.stateChange = { [weak self] state, reloadRows in
+            guard let self = self else { return }
+            
+            // 필터링 값이 비어있다면 "결과 없음" 호출
+            self.currencyTableView.noResultState(isEmpty: state.filteredDataList.isEmpty)
+            
+            if let rows = reloadRows {
+                self.currencyTableView.tableView.reloadRows(at: rows, with: .automatic)
+            } else {
+                self.currencyTableView.tableView.reloadData()
             }
-        )
+        }
+    }
+    
+    private func bindError() {
+        viewModel.error = { [weak self] in
+            self?.dataErrorAlert()
+        }
     }
     
     // 데이터 로딩 실패 시 Alert 띄어주는 함수 구현
@@ -79,39 +85,8 @@ class ViewController: UIViewController {
 
 extension ViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let keyword = searchText.uppercased()
-        
-        let newItems = keyword.isEmpty
-            ? allDataList
-        : allDataList.filter {
-            let currencyCode = $0.0
-            let countryName = CurrencyCountryData.name[currencyCode] ?? ""
-            return currencyCode.contains(keyword) || countryName.contains(searchText)
-        }
-        
-        let newKeys = newItems.map { $0.0 }
-        let oldKeys = filteredDataList.map { $0.0 }
-        
-        // 변경 없으면 아무 작업하지 않음
-        guard newKeys != oldKeys else { return }
-        
-        let oldCount = filteredDataList.count
-        let newCount = newItems.count
-        
-        // 항상 데이터 먼저 갱신
-        filteredDataList = newItems
-        // 필터링 값이 비어있다면 "결과 없음" 호출
-        currencyTableView.noResultState(isEmpty: filteredDataList.isEmpty)
-        
-        // 셀 수가 같을 때만 reloadRows 사용
-        if oldCount == newCount {
-            let visible = currencyTableView.tableView.indexPathsForVisibleRows ?? [] // 화면에 보이는 인덱스 목록을 가져옴
-            let indexPaths = visible.filter { $0.row < filteredDataList.count } // 현재 데이터 범위 안에 있는 인덱스만
-            currencyTableView.tableView.reloadRows(at: indexPaths, with: .automatic)
-        } else {
-            currencyTableView.tableView.reloadData()
-        }
-        
+        let visible = currencyTableView.tableView.indexPathsForVisibleRows ?? [] // 화면에 보이는 인덱스 목록을 가져옴
+        viewModel.filterData(with: searchText, visible: visible)
     }
 }
 
@@ -121,8 +96,8 @@ extension ViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let (currencyCode, rate) = filteredDataList[indexPath.row]
-        let calculatorVC = CalculatorViewController(currencyCode: currencyCode, rate: rate)
+        guard let data = viewModel.data(at: indexPath.row) else { return }
+        let calculatorVC = CalculatorViewController(currencyCode: data.0, rate: data.1)
         
         navigationController?.pushViewController(calculatorVC, animated: true)
     }
@@ -130,7 +105,7 @@ extension ViewController: UITableViewDelegate {
 
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredDataList.count
+        return viewModel.numberOfRows()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -138,8 +113,10 @@ extension ViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        let (currency, rate) = filteredDataList[indexPath.row]
-        cell.configure(currency: currency, rate: rate)
+        if let (currency, rate) = viewModel.data(at: indexPath.row) {
+            cell.configure(currency: currency, rate: rate)
+        }
+        
         return cell
     }
 }
