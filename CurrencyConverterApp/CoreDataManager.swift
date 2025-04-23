@@ -10,17 +10,19 @@ import CoreData
 
 class CoreDataManager {
     static let shared = CoreDataManager()
-    var container: NSPersistentContainer!
+    var container: NSPersistentContainer
     
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    self.container = appDelegate.persistentContainer
+   private init() {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        self.container = appDelegate.persistentContainer
+    }
     
     // Read
     func fetchAll() -> [String] {
         do {
             let result = try container.viewContext.fetch(CurrencyData.fetchRequest())
-            let code = result.map { $0.currencyCode }
-            return [code]
+            let code = result.compactMap { $0.currencyCode }
+            return code
         } catch {
             return []
         }
