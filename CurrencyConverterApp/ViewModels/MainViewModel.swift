@@ -14,7 +14,7 @@ final class MainViewModel: ViewModelProtocol {
     }
     
     private let dataService = DataService()
-    private var reloadIndexPaths: [IndexPath]? = nil
+    private var reloadIndexPaths: [IndexPath]? = nil // 항상 reload 되는 것이 아니므로 옵셔널
     
     struct State {
         var allDataList: [(String, Double)] = [] // 모든 데이터
@@ -81,9 +81,9 @@ final class MainViewModel: ViewModelProtocol {
         
         // 셀 수가 같을 때만 reloadRows 사용
         if oldCount == newCount {
-            reloadIndexPaths = visible.filter { $0.row < newCount } // 현재 데이터 범위 안에 있는 인덱스만
+            reloadIndexPaths = visible.filter { $0.row < newCount } // 현재 데이터 범위 안에 있는 유효한 인덱스만
         }
-        // 항상 데이터 먼저 갱신
+        // 필터링 데이터 갱신
         state.filteredDataList = newItems
     }
     
