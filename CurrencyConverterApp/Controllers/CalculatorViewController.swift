@@ -28,6 +28,7 @@ class CalculatorViewController: UIViewController {
         super.viewDidLoad()
         navigationBarUI()
         configureUI()
+        buttonDidTapped()
     }
     
     private func navigationBarUI() {
@@ -54,4 +55,34 @@ class CalculatorViewController: UIViewController {
         }
     }
     
+    private func buttonDidTapped() {
+        calculatorView.convertButton.addTarget(self, action: #selector(didTapConvert), for: .touchUpInside)
+    }
+    
+    @objc private func didTapConvert() {
+        guard let inputNumber = calculatorView.amountTextField.text, !inputNumber.isEmpty else {
+            showAlert(message: "금액을 입력해주세요")
+            return
+        }
+        guard let amount = Double(inputNumber) else {
+            showAlert(message: "올바른 숫자를 입력해주세요")
+            return
+        }
+        
+        let result = amount * rate
+        // 반올림 구현
+        let roundedAmount = (amount * 100).rounded() / 100
+        let roundedResult = (result * 100).rounded() / 100
+        
+        let stringAmount = String(format: "%.2f", roundedAmount)
+        let stringResult = String(format: "%.2f", roundedResult)
+        
+        calculatorView.resultLabel.text = "$\(stringAmount) → \(stringResult) \(currencyCode)"
+    }
+    
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
 }
