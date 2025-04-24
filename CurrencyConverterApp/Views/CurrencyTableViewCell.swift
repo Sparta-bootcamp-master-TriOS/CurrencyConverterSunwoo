@@ -70,14 +70,14 @@ class CurrencyTableViewCell: UITableViewCell {
         rateLabel.snp.makeConstraints {
             $0.width.equalTo(120)
             $0.centerY.equalToSuperview()
-            $0.trailing.equalTo(bookmarkButton.snp.leading).inset(10)
+            $0.trailing.equalTo(bookmarkButton.snp.leading)
             $0.leading.greaterThanOrEqualTo(labelStackView.snp.trailing).inset(16)
         }
         
         bookmarkButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(16)
             $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(30)
+            $0.width.height.equalTo(40)
         }
     }
     
