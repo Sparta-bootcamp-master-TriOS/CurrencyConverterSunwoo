@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewDelegates()
+        navigationBarUI()
         configureUI()
         fetchCurrencyData()
     }
@@ -27,6 +28,12 @@ class ViewController: UIViewController {
         countrySearchBar.mainSearchBar.delegate = self
         currencyTableView.tableView.delegate = self
         currencyTableView.tableView.dataSource = self
+    }
+    
+    private func navigationBarUI() {
+        self.title = "환율 정보"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
     }
     
     private func configureUI() {
@@ -111,6 +118,13 @@ extension ViewController: UISearchBarDelegate {
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         60
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let (currencyCode, rate) = filteredDataList[indexPath.row]
+        let calculatorVC = CalculatorViewController(currencyCode: currencyCode, rate: rate)
+        
+        navigationController?.pushViewController(calculatorVC, animated: true)
     }
 }
 

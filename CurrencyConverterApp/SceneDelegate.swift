@@ -17,7 +17,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: windowScene)
         
-        window.rootViewController = UINavigationController(rootViewController: ViewController()) // 화면전환을 위한 Navigation
+        let navVC = UINavigationController(rootViewController: ViewController()) // 화면전환을 위한 Navigation
+        navVC.navigationBar.prefersLargeTitles = true // 네비게이션 바에 (왼쪽 정렬) 큰 제목을 사용하겠다는 설정
+        window.rootViewController = navVC
         window.makeKeyAndVisible()
         
         self.window = window
