@@ -73,9 +73,14 @@ class ViewController: UIViewController {
 extension ViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         let keyword = searchText.uppercased()
+        
         let newItems = keyword.isEmpty
             ? allDataList
-            : allDataList.filter { $0.0.contains(keyword) }
+        : allDataList.filter {
+            let currencyCode = $0.0
+            let countryName = CurrencyCountryData.name[currencyCode] ?? ""
+            return currencyCode.contains(keyword) || countryName.contains(searchText)
+        }
         
         let newKeys = newItems.map { $0.0 }
         let oldKeys = filteredDataList.map { $0.0 }
@@ -88,6 +93,8 @@ extension ViewController: UISearchBarDelegate {
         
         // 항상 데이터 먼저 갱신
         filteredDataList = newItems
+        // 필터링 값이 비어있다면 "결과 없음" 호출
+        currencyTableView.noResultState(isEmpty: filteredDataList.isEmpty)
         
         // 셀 수가 같을 때만 reloadRows 사용
         if oldCount == newCount {
