@@ -11,6 +11,7 @@ final class MainViewModel: ViewModelProtocol {
     enum Action {
         case fetchData
         case filter(String, [IndexPath])
+        case toggleBookmark(String)
     }
     
     private let dataService = DataService()
@@ -19,12 +20,12 @@ final class MainViewModel: ViewModelProtocol {
     struct State {
         var allDataList: [(String, Double)] = [] // 모든 데이터
         var filteredDataList: [(String, Double)] = [] // 필터링된 데이터
+        var bookmarkCode = [String]() // 코어데이터에 저장되어 있는 데이터
     }
     
     private(set) var state = State() {
         didSet {
             stateChange?(state, reloadIndexPaths)
-            reloadIndexPaths = nil // 사용 후 초기화
         }
     }
     
@@ -42,11 +43,15 @@ final class MainViewModel: ViewModelProtocol {
                 self?.fetchCurrencyData()
             case .filter(let keyword, let visible):
                 self?.filterData(with: keyword, visible: visible)
+            case .toggleBookmark(let code):
+                self?.toggleBookmark(code: code)
             }
         }
     }
     
     private func fetchCurrencyData() {
+        state.bookmarkCode = CoreDataManager.shared.fetchAll()
+        
         dataService.fetchData(success: { [weak self] response in
             let data = response.rates
                 .sorted { $0.key < $1.key }
@@ -82,10 +87,15 @@ final class MainViewModel: ViewModelProtocol {
         // 셀 수가 같을 때만 reloadRows 사용
         if oldCount == newCount {
             reloadIndexPaths = visible.filter { $0.row < newCount } // 현재 데이터 범위 안에 있는 유효한 인덱스만
+        } else {
+            reloadIndexPaths = nil // 초기화
         }
+        
         // 필터링 데이터 갱신
-        state.filteredDataList = newItems
+        state.filteredDataList = applyBookmarks(to: newItems)
     }
+    
+    // MARK: - Method
     
     func numberOfRows() -> Int {
         return state.filteredDataList.count
@@ -94,5 +104,32 @@ final class MainViewModel: ViewModelProtocol {
     func data(at index: Int) -> (String, Double)? {
         guard index < state.filteredDataList.count else { return nil }
         return state.filteredDataList[index]
+    }
+    
+    func isBookmark(code: String) -> Bool {
+        return state.bookmarkCode.contains(code)
+    }
+    
+    // 통화코드가 즐겨찾기에 있는지 없는지 확인 후 삭제, 추가
+    private func toggleBookmark(code: String) {
+        if state.bookmarkCode.contains(code) {
+            CoreDataManager.shared.remove(currencyCode: code)
+        } else {
+            CoreDataManager.shared.add(currencyCode: code)
+        }
+        state.bookmarkCode = CoreDataManager.shared.fetchAll()
+        applyBookmarks()
+    }
+    
+    private func applyBookmarks() {
+        state.filteredDataList = applyBookmarks(to: state.allDataList)
+        reloadIndexPaths = nil
+    }
+    
+    // 즐겨찾기 셀과 원래 셀들 오름차순으로 정렬하는 메서드
+    private func applyBookmarks(to list: [(String, Double)]) -> [(String, Double)] {
+        let bookmarks = list.filter { state.bookmarkCode.contains($0.0) }.sorted { $0.0 < $1.0 }
+        let origins = list.filter { !state.bookmarkCode.contains($0.0) }.sorted { $0.0 < $1.0 }
+        return bookmarks + origins
     }
 }

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
 class ViewController: UIViewController {
     private let viewModel = MainViewModel()
@@ -109,12 +110,16 @@ extension ViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CurrencyTableViewCell.id) as? CurrencyTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CurrencyTableViewCell.id) as? CurrencyTableViewCell,
+              let (currency, rate) = viewModel.data(at: indexPath.row) else {
             return UITableViewCell()
         }
         
-        if let (currency, rate) = viewModel.data(at: indexPath.row) {
-            cell.configure(currency: currency, rate: rate)
+        let isBookmark = viewModel.isBookmark(code: currency)
+        
+        cell.configure(currency: currency, rate: rate, isBookmark:  isBookmark)
+        cell.bookmarkButtonTapped = { [weak self] in
+            self?.viewModel.action?(.toggleBookmark(currency))
         }
         
         return cell
